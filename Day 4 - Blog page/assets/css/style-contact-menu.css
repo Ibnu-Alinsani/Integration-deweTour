@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+:root {
+    --primary-color: white;
+    --secondary-color: black;
+    --bg-color: rgb(219, 219, 219);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'poppins',Arial, Helvetica, sans-serif;
+    /* font-weight: bold; */
+}
+
+body {
+    background-color: var(--bg-color);
+    /* padding: 2em; */
+}
+
+
+/* Navbar */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 8px;
+    background-color: var(--primary-color);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, .4);
+    z-index: 99;
+}
+
+.nav-right ul {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    list-style: none;
+}
+
+.nav-right ul li img{
+    margin-top: 5px;
+}
+
+.nav-right ul li a ,
+.nav-left a{
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: initial;
+}
+
+.nav-right ul li a:hover {
+    text-decoration: underline;
+}
+
+.nav-left {
+    background-color: white;
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    overflow: hidden; 
+    box-shadow: 5px 5px var(--secondary-color);
+    transition: .2s ease-in-out;
+}
+
+.nav-left a {
+    display: block;
+    color: var(--secondary-color);
+    padding: 3px 13px ;
+    transition: .2s ease-in-out;
+}
+
+.nav-left:hover {
+    box-shadow: none;
+}
+
+.nav-left a:hover {
+    color: white;
+    background-color: var(--secondary-color);
+}
+
+.nav-right, .nav-left {
+    margin: 0 50px;
+}
+/* akhir style navbar */
+
+/* Container */
+.container {
+    margin: 20px;
+    margin-top: 5em;
+}
+
+.container h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 350px;
+    margin: auto;
+}
+
+form:invalid .btn button {
+    opacity: .3;
+    pointer-events: none;
+}
+
+:focus {
+    outline: none;
+    transform: scale(1.05);
+}
+
+label span {
+    color: red;
+}
+
+input, select, textarea {
+    font-size: 1rem;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, .3);
+    transition: .3s ease-in-out;
+}
+
+textarea {
+    min-height: 75px;
+    max-height: 150px;
+    resize: vertical;
+}
+
+.btn {
+    text-align: end;
+    margin-top: 15px;
+}
+
+.btn button {
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    padding: 5px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: .1s;
+}
+
+.btn button:hover {
+    padding: 5px 30px;
+}
+
+
+@keyframes bound {
+    from {
+        transform: scale(1);
+    }
+    
+    to {
+        transform: scale(1.1);
+    }
+}

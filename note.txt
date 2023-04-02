@@ -1,0 +1,20 @@
+day 1
+github : https://github.com/Ibnu-Alinsani/Day-1---Dumbways-profil-
+vercel : https://day-1-dumbways-profil-ftdra8ir4-ibnu-alinsani.vercel.app/
+
+day 2
+github : https://github.com/Ibnu-Alinsani/Day-2---Dumbways-contact-me-
+
+vercel
+home : https://day-2-dumbways-contact-dksxzxaju-ibnu-alinsani.vercel.app/
+contact : https://day-2-dumbways-contact-dksxzxaju-ibnu-alinsani.vercel.app/contact-menu.html
+
+Referensi tambahan : https://arifwidiarto-dumbways.netlify.app/
+tombol sosmed nya oke, bisa dijadikan ide untuk buat website
+
+tambahan : next project coba buat tombol contact me nya seperti punya bayangan di sebelah kanan bawah dan agak ke luar sekitar 10 atau 15px, lalu ketika di hover atau di klik bayangan nya nyatu sama tombolnya
+
+day 3
+deploy with github
+repo : https://github.com/Ibnu-Alinsani/Batch-46-Dumbways---Ibnu-Alinsani/tree/Day-3
+link web : https://ibnu-alinsani.github.io/Batch-46-Dumbways---Ibnu-Alinsani/

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Project</title>
+    <link rel="stylesheet" href="assets/css/style-blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- navigation Bar -->
+    <nav>
+        <div class="nav-right">
+            <ul>
+                <li>
+                    <a href="https://dumbways.id/">
+                        <img src="assets/images/logo.png" alt="">
+                    </a>
+                </li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html">My Project</a></li>
+            </ul>
+        </div>
+        <div class="nav-left">
+            <a href="contact-menu.html">Contact Me</a>
+        </div>
+    </nav>
+    <!-- end navigation bar -->
+
+    <!-- input field -->
+    <div class="container-1">
+        <div class="hero">
+            <img src="assets/images/city.jpg" alt="">
+            <h1 style="display: inline;">ADD MY PROJECT</h1>
+        </div>
+        <div class="container-dalam">
+            
+                <!-- form -->
+            <form action="">
+                <div class="title">
+                    <label for="title">Project Name</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="date">
+                    <div class="start">
+                        <label for="start-date">Start Date</label>
+                        <input type="date" id="start-date" required>
+                    </div>
+                    <div class="end">
+                        <label for="end-date">End Date</label>
+                        <input type="date" id="end-date" value="" required>
+                    </div>
+                </div>
+                <div>
+                    <label for="description">Description</label>
+                    <textarea id="description" required></textarea>
+                </div>
+                <div class="techno">
+                    <label for="technologies">Technologies</label>
+                    <div class="checkbox">
+                        <div class="input-checkbox">
+                            <input type="checkbox" name="checkbox" id="node-js" value="fa-node">
+                            <label for="node-js">Node Js</label>
+                        </div>
+                        <div class="input-checkbox">
+                            <input type="checkbox" name="checkbox" id="react-js" value="fa-react">
+                            <label for="react-js">React Js</label>
+                        </div>
+                        <div class="input-checkbox">
+                            <input type="checkbox" name="checkbox" id="next-js" value="fa-golang">
+                            <label for="next-js">Golang</label>
+                        </div>
+                        <div class="input-checkbox">
+                            <input type="checkbox" name="checkbox" id="typescript" value="fa-python">
+                            <label for="typescript">Python</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="image">
+                    <label for="image">Upload Image</label>
+                    <div class="image-file">
+                        <input type="file" alt="file" id="image" required>
+                        <img src="assets/images/paperclip.svg" alt="attach file">
+                    </div>
+                </div>
+                <div class="btn">
+                    <button type="submit">submit</button>
+                </div>
+            </form>
+            <!-- end form -->        
+        </div>
+    </div>
+    <!-- end input field -->
+    
+    <!-- transisi -->
+    <div class="transisi"></div>
+    <!-- end transisi -->
+    
+    <!-- content project -->
+    <div class="container-2">
+        <h1>MY PROJECT</h1>
+        <div class="card-wrapping">
+            <div class="card">
+                <img src="assets/images/code-1 .jpg" alt="">
+                <h4>Dumbways Mobile App - 2021</h4>
+                <p>Duration : 3 bulan</p>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque ratione tenetur reiciendis deserunt necessitatibus maxime numquam impedit saepe id mollitia.<a href="blog-detail.html">...</a></p>
+                <div class="teknologi">
+                    <div>
+                        <i class="fa-brands fa-node"></i>
+                    </div>
+                    <div>
+                        <i class="fa-brands fa-react"></i>
+                    </div>
+                    <div>
+                        <i class="fa-brands fa-golang"></i>
+                    </div>
+                    <div>
+                        <i class="fa-brands fa-python"></i>
+                    </div>
+                </div>    
+                <div class="btn-2">
+                    <button>edit</button>
+                    <button>delete</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- end content project -->
+    <script src="assets/Js/my-project.js"></script>
+</body>
+</html>
