@@ -11,11 +11,12 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'poppins',Arial, Helvetica, sans-serif;
+    /* font-weight: bold; */
 }
 
 body {
     background-color: var(--bg-color);
-    padding: 5em;
+    /* padding: 2em; */
 }
 
 
@@ -86,82 +87,83 @@ nav {
 }
 /* akhir style navbar */
 
-/* isi content - container */
+/* Container */
 .container {
+    margin: 20px;
+    margin-top: 5em;
+}
+
+.container h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Form */
+form {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 3em;
-    border-radius: 10px;
-    padding: 2.5em 2em;
-    background-image: linear-gradient(rgb(234, 234, 234), rgb(162, 162, 162), rgb(106, 106, 106));
-    background-color: rgb(236, 236, 236);
-    box-shadow: 0 10px 10px rgba(0, 0, 0, .4);
-    transform: translateY(1em);
-}
-
-.second-column p {
-    color: rgb(244, 244, 244);
-}
-
-/* first-column */
-.first-column {
-    margin: 0 auto;
-    display: flex;
-    width: 100%;
-    height: fit-content;
-    gap: 3em;
-}
-
-.hero {
-    width: 60%;
-}
-
-.hero img {
-    width: 50vw;
-    height: 60vh;
-    border-radius: 5px;
-    object-fit: cover;
-}
-.detail p {
-    font-size: 1.3rem;
-}
-
-i {
-    font-size: 1.5rem;
-    margin-right: 10px;
-}
-
-.duration {
-    margin: 2em 0 3em
-}
-
-.duration h3, .duration div {
-    margin-top: .6em;
-}
-
-.technoUse {
-    margin-top: 1em;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 15px;
-}
-
-.date,
-.month,
-.react,
-.node,
-.javascript,
-.socket {
-    display: flex;
-    align-items: center;
     gap: 10px;
+    width: 350px;
+    margin: auto;
 }
-/* end first-column */
 
-/* second-column */
-.second-column p {
-    text-indent: 50px;
-    text-align: justify;
+form:invalid .btn button {
+    opacity: .3;
+    pointer-events: none;
 }
-/* end second-column */
+
+:focus {
+    outline: none;
+    transform: scale(1.05);
+}
+
+label span {
+    color: red;
+}
+
+input, select, textarea {
+    font-size: 1rem;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, .3);
+    transition: .3s ease-in-out;
+}
+
+textarea {
+    min-height: 75px;
+    max-height: 150px;
+    resize: vertical;
+}
+
+.btn {
+    text-align: end;
+    margin-top: 15px;
+}
+
+.btn button {
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    padding: 5px 25px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: .1s;
+}
+
+.btn button:hover {
+    padding: 5px 30px;
+}
+
+
+@keyframes bound {
+    from {
+        transform: scale(1);
+    }
+    
+    to {
+        transform: scale(1.1);
+    }
+}

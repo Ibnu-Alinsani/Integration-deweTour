@@ -72,3 +72,63 @@ function renderBlog() {
     } 
     alert('SUKSES MENAMBAHKAN PROJECT')
 }
+
+
+function getDuration(startTime, endTime) {
+    const distance = new Date(endTime) - new Date(startTime);
+    const yearDistance = Math.floor(distance / (12 * 30 * 24 * 60 * 60 * 1000))
+    
+    if (yearDistance > 0) {
+        return `${yearDistance} Year`
+    } else {
+        const monthDistance = Math.floor(distance / (30 * 24 * 60 * 60 * 1000));
+        if (monthDistance > 0) {;
+            return `${monthDistance} Month`;
+        } else {
+            const weekDistance = Math.floor(distance / (7 * 24 * 60 * 60 * 1000));
+            if (weekDistance > 0) {
+                return `${weekDistance} Week`
+            } else {
+                const dayDistance = Math.floor(distance / (24 * 60 * 60 * 1000));
+                if (dayDistance > 0) {
+                    return `${dayDistance} Day`
+                } else {
+                    return alert('MAAF, TANGGAL YANG ANDA MASUKKAN SALAH! SILAHKAN DELETE DAN PERIKSA KEMBALI');
+                }
+            }
+        }
+    }
+}
+
+
+
+// function getDuration(startTime, endTime) {
+//     const distance = new Date(endTime) - new Date(startTime);
+//     const monthDistance = Math.floor(distance / (30 * 24 * 60 * 60 * 1000));
+//     const dayDistance = Math.floor(distance / (24 * 60 * 60 * 1000));
+//     const dayExtra = dayDistance - 7 
+    
+//     if (monthDistance > 12) {
+//         const yearDistance = Math.floor(distance / (12 * 30 * 24 * 60 * 60 * 1000))
+//         const monthExtra = monthDistance - 12;
+//         console.log(yearDistance);
+//         return `${yearDistance} Year ${monthExtra} Month`
+//     } else {
+//         if (dayDistance > 30) {
+//             const dayExtraMonth = dayDistance - 30;
+//             return `${monthDistance} Month ${dayExtraMonth} Day`;
+//         } else {
+//             const weekDistance = Math.floor(distance / (7 * 24 * 60 * 60 * 1000));
+//             const dayExtraWeek = dayDistance - dayExtra;
+//             if (dayDistance > 7) {
+//                 return `${weekDistance} Week ${dayExtraWeek} Day`
+//             } else {
+//                 if (dayDistance > 0) {
+//                     return `${dayDistance} Day`
+//                 } else {
+//                     return alert('MAAF, TANGGAL YANG ANDA MASUKKAN SALAH! SILAHKAN DELETE DAN PERIKSA KEMBALI');
+//                 }
+//             }
+//         }
+//     }
+// }

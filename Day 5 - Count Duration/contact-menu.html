@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Menu</title>
+    <link rel="stylesheet" href="assets/css/style-contact-menu.css">
+</head>
+<body>
+    <!-- Navigasi Bar -->
+    <nav>
+        <div class="nav-right">
+            <ul>
+                <li>
+                    <a href="https://dumbways.id/">
+                        <img src="assets/images/logo.png" alt="">
+                    </a>
+                </li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html">My Project</a></li>
+            </ul>
+        </div>
+        <div class="nav-left">
+            <a href="contact-menu.html">Contact Me</a>
+        </div>
+    </nav>
+    <!-- Akhir navigasi bar -->
+
+    <!-- container -->
+    <div class="container">
+        <h1>GET IN TOUCH</h1>
+        <form id="form">
+
+            <div>
+                <label for="nama">Name <span>*</span></label>
+                <input type="text" id="nama" pattern="[A-Za-z ]+" required>
+            </div>
+            <div>
+                <label for="email">Email <span>*</span></label>
+                <input type="email" id="email" required>
+            </div>
+            <div>
+                <label for="phone">Phone Number</label>
+                <input type="number" id="phone" min="0">
+            </div>
+            <div>
+                <label for="subject">Subject</label>
+                <select name="menu" id="subject">
+                    <option>Let's Talk</option>
+                    <option>Let's Collaboration</option>
+                    <option>I'am Hiring</option>
+                </select>
+            </div>
+            <div>
+                <label for="messsage">Your Message <span>*</span></label>
+                <textarea id="message" required></textarea>
+            </div>
+            <div class="btn">
+                <button type="button">submit</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- akhir container -->
+
+    <script src="assets/Js/script.js"></script>
+</body>
+</html>

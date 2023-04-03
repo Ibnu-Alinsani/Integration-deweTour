@@ -18,3 +18,7 @@ day 3
 deploy with github
 repo : https://github.com/Ibnu-Alinsani/Batch-46-Dumbways---Ibnu-Alinsani/tree/Day-3
 link web : https://ibnu-alinsani.github.io/Batch-46-Dumbways---Ibnu-Alinsani/
+
+day 4 
+repo : https://github.com/Ibnu-Alinsani/Batch-46-Dumbways---Ibnu-Alinsani/tree/Day-4
+link web
