@@ -3,6 +3,8 @@ import { payment } from "../../data/data";
 import logo from "../../assets/Icon.svg";
 import admin from "../../assets/action-admin.png";
 import close from "../../assets/close.svg";
+import { useQuery } from "react-query";
+import { API } from "../../config/api";
 
 export default function AdminList(props) {
   // const [idPay, setIdPay] = useState()
@@ -12,6 +14,12 @@ export default function AdminList(props) {
     approve: false,
     cancel: false,
   });
+
+  const { data : trans} = useQuery("transactionsCache", async () => {
+    const response = await API.get("/transactions")
+    return response.data.data
+  })
+  console.log(trans)
 
   useEffect(() => {
     payment.find((e, i) => {

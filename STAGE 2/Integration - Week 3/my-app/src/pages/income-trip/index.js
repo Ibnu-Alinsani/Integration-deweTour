@@ -10,6 +10,13 @@ import { useQuery } from "react-query";
 
 export default function Trip() {
   const [currentIndex, setCurrentIndex] = useState();
+
+  const { data: trip } = useQuery("IncomeTripCache", async () => {
+    const response = await API.get("/trips")
+    return response.data.data
+  })
+  console.log(trip)
+
   function handleCarousel(index) {
     setCurrentIndex(index);
   }

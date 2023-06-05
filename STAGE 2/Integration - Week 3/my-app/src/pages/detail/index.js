@@ -7,40 +7,38 @@ import meal from "../../assets/meal.svg";
 import time from "../../assets/time.svg";
 import calendar from "../../assets/calendar.svg";
 import * as img from "../../assets";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { API } from "../../config/api";
 import Swal from "sweetalert2";
 import { UserContext } from "../../context";
 
 export default function Detail(props) {
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const { id } = useParams();
   const [popUp, setPopUp] = useState(false);
   const [alert, setAlert] = useState(false);
   const [count, setCount] = useState(1);
   const [money, setMoney] = useState(0);
   const [booking, setBooking] = useState(null);
+  const [state, dispatch] = useContext(UserContext)
+  
+  const { data: detailTrip } = useQuery("detailCache", async () => {
+    const response = await API.get(`/trip/${id}`);
+    return response.data.data;
+  });
 
   useEffect(() => {    
     if(booking) {
       localStorage.setItem("booking", JSON.stringify(booking))
     }
   }, [booking])
-
-  const [state, dispatch] = useContext(UserContext)
+  
 
   const images = [img.negara1, img.negara2, img.negara3];
-
-  props.callCount(count);
 
   if (count < 0) {
     setCount(0);
   }
-
-  const { data: detailTrip } = useQuery("detailCache", async () => {
-    const response = await API.get(`/trip/${id}`);
-    return response.data.data;
-  });
 
   useEffect(() => {
     if (detailTrip) {
@@ -86,59 +84,40 @@ export default function Detail(props) {
   let dateNow = new Date();
   let date = `${getNameDay[dateNow.getDay()]}, ${dateNow.getDate()} ${getNameMonth[dateNow.getMonth()]} ${dateNow.getFullYear()}`
 
+  let data = {
+    CounterQty : count,
+    Status: "Waiting Payment",
+    Total: money,
+    Attachment: "nothing",
+    TripID: detailTrip?.id
+  }
+
   // handleBook
   const Navigate = useNavigate();
-  function handleBookNow() {
-    // if (props.sendUser) {
-      props.callData(data);
-      props.callDate(dateNow.getDate());
-      props.callMonth(getNameMonth[dateNow.getMonth()]);
-      props.callYear(dateNow.getFullYear());
-      props.callDay(getNameDay[dateNow.getDay()]);
+  const handleBookNow = useMutation(async (e) => {
+    e.preventDefault()
+    try {    
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
 
-      setBooking({
-        dateBooking: date,
-        title: detailTrip.title,
-        country: detailTrip.Country.name,
-        accomodation: detailTrip.accomodation,
-        transportation: detailTrip.transportation,
-        eat: detailTrip.eat,
-        day: detailTrip.day,
-        night: detailTrip.night,
-        dateTrip: detailTrip.date_trip,
-        price: detailTrip.price,
-        quota: detailTrip.quota,
-        description: detailTrip.description,
-        qty: count, 
-        total: money,
-      });
+      const body = JSON.stringify(data)
 
-      if (booking) {
-        Navigate("/")
-      }
-      // return <Navigate to="/" replace />;
-      // Navigate('/booking');
-      // console.log("ini sudah login");
-    // } else if (count < 1) {
-    //   // setAlert(true);
-    //   Swal.fire({
-    //     title: "Kurang!",
-    //     text: "Minimal satu mas",
-    //     icon: "error",
-    //     confirmButtonText: "oke",
-    //   });
-    // } else {
-      // setPopUp(true);
-      if (!state.isLogin) {
+      const response = await API.post("/add-transaction", body, config)
+      console.log("Transaction Success", response.data.data)
+
       Swal.fire({
-        title: "Warning!",
-        text: "Monggo Login dulu mas",
-        icon: "warning",
-        confirmButtonText: "oke",
+        title: "Success",
+        text: `We wait your payment`,
+        icon: "success",
       });
-      // console.log("belum login");
+      Navigate("/booking")
+    } catch (error) {
+      console.log("Transaction failed", error)
     }
-  }
+  })
 
   return (
     <>
@@ -277,7 +256,7 @@ export default function Detail(props) {
         <div className="container-btn-book">
           <button
             className="btn-book bg-orange fw-900 fs-18 text-avenir"
-            onClick={handleBookNow}
+            onClick={(e) => handleBookNow.mutate(e)}
           >
             BOOK NOW
           </button>

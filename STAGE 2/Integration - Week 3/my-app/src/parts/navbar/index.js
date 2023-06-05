@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { user } from "../../data/data";
 import Dropdown from "rsuite/Dropdown";
 import profile from "../../assets/profile.png";
+import profil from "../../assets/profil.jpg";
 import bill from "../../assets/bill.png";
 import logout from "../../assets/logout.png";
 import trip from "../../assets/trip.png";
@@ -13,7 +14,7 @@ import palm from "../../assets/palm.png";
 import hibiscus from "../../assets/hibiscus.png";
 import list from "../../assets/list.png";
 import "rsuite/dist/rsuite.min.css";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { API, setAuthToken } from "../../config/api";
 import jwt_decode from "jwt-decode";
 
@@ -27,10 +28,7 @@ export default function Navbar(props) {
     window.scrollTo(0, 0);
   }, []);
 
-  const [login, setLogin] = useState(false);
-  const [admin, setAdmin] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const [id, setId] = useState();
   const [register, setRegister] = useState();
   const [img, setImg] = useState();
   const [imgShow, setImgShow] = useState(false);
@@ -44,6 +42,11 @@ export default function Navbar(props) {
     address: "",
     gender: "",
   });
+
+  const {data : user} = useQuery("userCache", async () => {
+    const response = await API.get('/user/' + state.user.id)
+    return response.data.data
+  })
 
   const [formLogin, setFormLogin] = useState({
     email: "",
@@ -75,11 +78,6 @@ export default function Navbar(props) {
       [e.target.name]: e.target.value,
     });
   };
-
-  // send value to parent app.js
-  props.call(login);
-  props.callId(id);
-  props.callAdmin(admin);
 
   function handleOnClickLogin() {
     const visible = document.querySelector(".container-form-login");
@@ -137,7 +135,7 @@ export default function Navbar(props) {
     const icon = document.querySelector(".rs-btn");
     // console.log(icon, "ini icon");
     if (icon) {
-      icon.style.backgroundImage = `url(${img})`;
+      icon.style.backgroundImage = `url(${user?.image ? user?.image : profil})`;
       icon.style.zIndex = "2";
     }
   }, [imgShow]);
@@ -188,7 +186,7 @@ export default function Navbar(props) {
     color: "black",
   };
 
-  return state.user.role == "admin" ? (
+  return state?.user.role == "admin" ? (
     <>
       <nav className="nav">
         <Link to="/">
@@ -241,7 +239,7 @@ export default function Navbar(props) {
         </div>
       </nav>
     </>
-  ) : state.user.role == "user" ? (
+  ) : state?.user.role == "user" ? (
     <>
       <nav className="nav">
         <Link to="/">
@@ -264,7 +262,7 @@ export default function Navbar(props) {
                 </button>
               </Link>
             </Dropdown.Item>
-            {props.sendCount > 0 ? (
+            
               <Dropdown.Item>
                 <img src={bill} alt="pay" className="icon-dropdown" />
                 <Link
@@ -275,9 +273,6 @@ export default function Navbar(props) {
                   Pay
                 </Link>
               </Dropdown.Item>
-            ) : (
-              <div></div>
-            )}
             <hr />
             <Dropdown.Item>
               <img src={logout} alt="logout" className="icon-dropdown" />

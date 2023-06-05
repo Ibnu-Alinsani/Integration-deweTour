@@ -21,11 +21,6 @@ import { UserContext } from "./context";
 import { API, setAuthToken } from "./config/api";
 import Swal from "sweetalert2";
 
-
-if (localStorage.token) {
-  setAuthToken(localStorage.token);
-}
-
 function App() {
   
   const [user, setUser] = useState(false);
@@ -46,7 +41,7 @@ function App() {
   useEffect(() => {
     if (!isLoading) {
       if (state.isLogin === false) {
-        // <Navigate to="/" replace/>
+        <Navigate to="/" replace/>
         // alert("silahkan login mas")
       }
     }
@@ -55,7 +50,10 @@ function App() {
   
   useEffect(() => {
     if (localStorage.token) {
+      setAuthToken(localStorage.token)
       checkUser();
+    } else {
+      setIsLoading(false)
     }
   }, []);
 
