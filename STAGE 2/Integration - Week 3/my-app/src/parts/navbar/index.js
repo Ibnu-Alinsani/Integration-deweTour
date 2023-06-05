@@ -107,16 +107,28 @@ export default function Navbar(props) {
       const data = response.data.data;
       console.log("Login Success : ", data);
 
-      Swal.fire({
-        title: "Login Success",
-        text: `Welcome ${data.fullname}, Enjoy Your Travel`,
-        icon: "success",
-      });
+      if (data.role == "admin") {
+        Swal.fire({
+          title: "Login Success",
+          text: `Welcome ${data.fullname}, How Are You Today?`,
+          icon: "success",
+          confirmButtonText: "FINE",
+        });
+      } else  {
+        Swal.fire({
+          title: "Login Success",
+          text: `Welcome ${data.fullname}, Enjoy Your Travel`,
+          icon: "success",
+        });
+      }
+
 
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: response.data.data,
       });
+
+      setImgShow(true)
 
       setAuthToken(localStorage.token);
       hiddenLogin();

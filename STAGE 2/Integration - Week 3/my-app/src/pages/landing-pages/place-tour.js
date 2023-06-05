@@ -16,7 +16,7 @@ export default function Locate() {
     return value?.toLocaleString(["ban", "id"]);
   }
 
-  const { data: trip } = useQuery("tripCache", async () => {
+  const { data: trip, refetch } = useQuery("tripCache", async () => {
     const response = await API.get("/trips");
     return response.data.data;
   });

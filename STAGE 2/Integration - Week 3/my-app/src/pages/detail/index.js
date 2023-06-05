@@ -15,24 +15,21 @@ import { UserContext } from "../../context";
 export default function Detail(props) {
   // const [data, setData] = useState([]);
   const { id } = useParams();
-  const [popUp, setPopUp] = useState(false);
-  const [alert, setAlert] = useState(false);
   const [count, setCount] = useState(1);
   const [money, setMoney] = useState(0);
   const [booking, setBooking] = useState(null);
-  const [state, dispatch] = useContext(UserContext)
-  
+  const [state, dispatch] = useContext(UserContext);
+
   const { data: detailTrip } = useQuery("detailCache", async () => {
     const response = await API.get(`/trip/${id}`);
     return response.data.data;
   });
 
-  useEffect(() => {    
-    if(booking) {
-      localStorage.setItem("booking", JSON.stringify(booking))
+  useEffect(() => {
+    if (booking) {
+      localStorage.setItem("booking", JSON.stringify(booking));
     }
-  }, [booking])
-  
+  }, [booking]);
 
   const images = [img.negara1, img.negara2, img.negara3];
 
@@ -82,42 +79,44 @@ export default function Detail(props) {
   ];
 
   let dateNow = new Date();
-  let date = `${getNameDay[dateNow.getDay()]}, ${dateNow.getDate()} ${getNameMonth[dateNow.getMonth()]} ${dateNow.getFullYear()}`
+  let date = `${getNameDay[dateNow.getDay()]}, ${dateNow.getDate()} ${
+    getNameMonth[dateNow.getMonth()]
+  } ${dateNow.getFullYear()}`;
 
   let data = {
-    CounterQty : count,
+    CounterQty: count,
     Status: "Waiting Payment",
     Total: money,
     Attachment: "nothing",
-    TripID: detailTrip?.id
-  }
+    TripID: detailTrip?.id,
+  };
 
   // handleBook
   const Navigate = useNavigate();
   const handleBookNow = useMutation(async (e) => {
-    e.preventDefault()
-    try {    
+    e.preventDefault();
+    try {
       const config = {
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
       };
 
-      const body = JSON.stringify(data)
+      const body = JSON.stringify(data);
 
-      const response = await API.post("/add-transaction", body, config)
-      console.log("Transaction Success", response.data.data)
+      const response = await API.post("/add-transaction", body, config);
+      console.log("Transaction Success", response.data.data);
 
       Swal.fire({
         title: "Success",
         text: `We wait your payment`,
         icon: "success",
       });
-      Navigate("/booking")
+      Navigate("/booking");
     } catch (error) {
-      console.log("Transaction failed", error)
+      console.log("Transaction failed", error);
     }
-  })
+  });
 
   return (
     <>
@@ -218,19 +217,25 @@ export default function Detail(props) {
               / Person
             </p>
             <div className="btn-count">
-              <button
-                onClick={handleSub}
-                className="btn-count-add text-avenir bg-orange"
-              >
-                -
-              </button>
-              <p className="text-avenir fw-900 fs-18 mt-3">{count}</p>
-              <button
-                onClick={handleAdd}
-                className="btn-count-sub  text-avenir bg-orange"
-              >
-                +
-              </button>
+              {state.role == "user" ? (
+                <>
+                  <button
+                    onClick={handleSub}
+                    className="btn-count-add text-avenir bg-orange"
+                  >
+                    -
+                  </button>
+                  <p className="text-avenir fw-900 fs-18 mt-3">{count}</p>
+                  <button
+                    onClick={handleAdd}
+                    className="btn-count-sub  text-avenir bg-orange"
+                  >
+                    +
+                  </button>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
           <hr
@@ -238,39 +243,39 @@ export default function Detail(props) {
               color: "transparent",
             }}
           />
-          <div className="total mt-4">
-            <p className="text-avenir fw-900 fs-24">Total : </p>
-            <p className="text-avenir text-orange fw-900 fs-24">
-              {new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-              }).format(parseInt(money))}
-            </p>
-          </div>
-          <hr
-            style={{
-              color: "transparent",
-            }}
-          />
+          {state.role == "user" ? (
+            <>
+              <div className="total mt-4">
+                <p className="text-avenir fw-900 fs-24">Total : </p>
+                <p className="text-avenir text-orange fw-900 fs-24">
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  }).format(parseInt(money))}
+                </p>
+              </div>
+              <hr
+                style={{
+                  color: "transparent",
+                }}
+              />
+            </>
+          ) : (
+            <></>
+          )}
         </div>
         <div className="container-btn-book">
+          {
+            state.role == "user" ?
           <button
             className="btn-book bg-orange fw-900 fs-18 text-avenir"
             onClick={(e) => handleBookNow.mutate(e)}
           >
             BOOK NOW
           </button>
-          {popUp ? (
-            <div className="popup-should-login ">
-              <p className="text-avenir">Silahkan login terlebih dahulu</p>
-            </div>
-          ) : alert ? (
-            <div className="popup-should-login ">
-              <p className="text-avenir">Minimal Satu Bruhh...</p>
-            </div>
-          ) : (
-            <div></div>
-          )}
+          :
+          <></>
+          }
         </div>
       </div>
     </>

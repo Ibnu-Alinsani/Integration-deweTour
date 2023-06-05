@@ -1,21 +1,19 @@
 import { Link } from "react-router-dom";
-// import PlaceTour from "./landing-pages/place-tour";
 import { useState } from "react";
-import { Locates } from "../../data/data";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
 import { API } from "../../config/api";
+import { Carousel } from "react-bootstrap";
 
 import { useQuery } from "react-query";
 
 export default function Trip() {
   const [currentIndex, setCurrentIndex] = useState();
 
-  const { data: trip } = useQuery("IncomeTripCache", async () => {
-    const response = await API.get("/trips")
-    return response.data.data
-  })
-  console.log(trip)
+  const { data: trip, refetch } = useQuery("IncomeTripCache", async () => {
+    const response = await API.get("/trips");
+    return response.data.data;
+  });
+  console.log(trip);
 
   function handleCarousel(index) {
     setCurrentIndex(index);
@@ -33,44 +31,47 @@ export default function Trip() {
           <Link to="/add-trip">
             <button className="link-add-trip">Add Trip</button>
           </Link>
+          <Link to="/add-country">
+            <button className="link-add-trip">Add Country</button>
+          </Link>
         </div>
         <div className="wrapper-locate-admin">
           <div className="locate locate-admin">
             {/* <PlaceTour /> */}
-            {Locates.map((locate) => {
+            {trip?.map((locate) => {
               return (
-                // <Link to={`/detail-place/${locate.id}`} className="text-decoration-none">
-                <div className="card-locate">
-                  <Carousel
-                    onChange={handleCarousel}
-                    showArrows={true}
-                    autoPlay={true}
-                    infiniteLoop={true}
-                    selectedItem={locate.gambar[currentIndex]}
-                    className="carousel-container"
-                  >
-                    {locate.gambar.map((image) => {
-                      return (
-                        <div className="carousel">
-                          <img src={image} alt={image} />
+                <Link
+                  to={`/detail-place/${locate.id}`}
+                  className="text-decoration-none"
+                >
+                  <div className="card-locate">
+                    <Carousel fade>
+                      <Carousel.Item>
+                        <img
+                          className="d-block w-100"
+                          src={locate.image}
+                          alt="First slide"
+                        />
+                      </Carousel.Item>
+                    </Carousel>
+                    <div className="carousel-container">
+                      <div>
+                        <p className="quota-tour"> 1 /{locate.quota}</p>
+                        <h2 className="locate-name text-decoration-none">
+                          {locate.title}...
+                        </h2>
+                        <div className="inform">
+                          <p className="locate-price text-decoration-none">
+                            IDR {money(locate.price)}
+                          </p>
+                          <p className="locate-country">
+                            {locate.Country.name}
+                          </p>
                         </div>
-                      );
-                    })}
-                  </Carousel>
-                  <p className="quota-tour">
-                    {locate.fillQuota} / {locate.quota}
-                  </p>
-                  <h2 className="locate-name text-decoration-none">
-                    {locate.nama.substr(0, 20)}...
-                  </h2>
-                  <div className="inform">
-                    <p className="locate-price text-decoration-none">
-                      IDR {money(locate.harga * locate.fillQuota)}
-                    </p>
-                    <p className="locate-country">{locate.negara}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                // </Link>
+                </Link>
               );
             })}
           </div>

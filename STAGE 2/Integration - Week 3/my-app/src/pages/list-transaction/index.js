@@ -3,49 +3,101 @@ import { payment } from "../../data/data";
 import logo from "../../assets/Icon.svg";
 import admin from "../../assets/action-admin.png";
 import close from "../../assets/close.svg";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { API } from "../../config/api";
+import { json } from "react-router-dom";
 
 export default function AdminList(props) {
-  // const [idPay, setIdPay] = useState()
-  const [pay, setPay] = useState({});
   const [show, setShow] = useState(false);
-  const [status, setStatus] = useState({
-    approve: false,
-    cancel: false,
+  const [idx, setIdx] = useState();
+  const [data, setData] = useState();
+
+  const [statusApprove, setStatusApprove] = useState({
+    status: "Cancel",
+  });
+  const [statusCancel, setStatusCancel] = useState({
+    status: "Approve",
   });
 
-  const { data : trans} = useQuery("transactionsCache", async () => {
-    const response = await API.get("/transactions")
-    return response.data.data
-  })
-  console.log(trans)
+  // console.log(status);
+
+  const handleActionApprove = useMutation(async (e) => {
+    try {
+
+      const id = e
+      console.log(e, "ini e");
+      let config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      const formData = new FormData();
+      formData.set("status", statusApprove);
+      const body = JSON.stringify(statusApprove)
+
+      const response = await API.patch(
+        `/edit-transactionStatus/12`,
+        body,
+        config
+      );
+
+      console.log("success", response);
+    } catch (error) {
+      console.log("approve failed : ", error);
+    }
+  });
+
+  const handleActionCancel = useMutation(async (e) => {
+    try {
+      const id = e;
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
+
+      const formData = new FormData();
+      formData.set("status", body, config);
+
+      const body = JSON.stringify(statusCancel)
+
+      const response = await API.patch(
+        `/edit-transactionStatus/12`,
+        body,
+        config
+      );
+      console.log("success", response);
+    } catch (error) {
+      console.log("approve failed : ", error);
+    }
+  });
+
+  const { data: trans, refetch } = useQuery("transactionsCache", async () => {
+    const response = await API.get("/transactions");
+    // setData(response.data.data)
+    return response.data.data;
+  });
 
   useEffect(() => {
-    payment.find((e, i) => {
-      if (i == pay.id) {
-        setPay({
-          ...pay,
-          name: e.user.name,
-          gender: e.user.gender,
-          handphone: e.user.handphone,
-          order: e.user.order,
-          img: e.buktiImg,
-          date: e.date,
-        });
+    trans?.filter((item) => {
+      if (item.id == idx) {
+        setData(item);
       }
     });
-    console.log(pay.id, "ini id");
-  }, [pay.id]);
+  }, [idx]);
 
-  const color = [{ color: "green" }, { color: "orange" }, { color: "red" }];
+  const color = [
+    { color: "green" },
+    { color: "orange" },
+    { color: "red" },
+    { color: "blue" },
+  ];
 
   function closePopUpClose() {
-    setStatus({ cancel: true });
     setShow(false);
   }
   function closePopUpApprove() {
-    setStatus({ approve: true });
     setShow(false);
   }
 
@@ -63,52 +115,48 @@ export default function AdminList(props) {
               <th>Status Payment</th>
               <th>Action</th>
             </tr>
-            {payment.map((e) => {
-              return (
-                <tr>
-                  <td>{e.id + 1}</td>
-                  <td>{e.user.name}</td>
-                  <td>{e.user.order.nama}</td>
-                  <td>{e.buktiTransfer}</td>
-                  {e.statusPayment == "Approve" ? (
-                    <td style={color[0]}>{e.statusPayment}</td>
-                  ) : e.statusPayment == "Pending" ? (
-                    <td style={color[1]}>{e.statusPayment}</td>
-                  ) : (
-                    <td style={color[2]}>{e.statusPayment}</td>
-                  )}
-                  {/* {
-                    status.approve ?
-                    <td style={color[0]}>Approve</td>
-                    :
-                    status.cancel ? 
-                    <td style={color[2]}>Cancel</td>
-                    :
-                    <td style={color[1]}>Pending</td>
-                  } */}
-                  <td>
-                    <button
-                      className="btn-popup-transactions"
-                      onClick={() => {
-                        setPay({
-                          id: e.id,
-                          qty: e.qty,
-                          total: e.total,
-                          statusPayment: e.statusPayment,
-                        });
-                        setShow(true);
-                      }}
-                    >
-                      <img src={admin} alt="Click" />
-                    </button>
-                  </td>
-                </tr>
-              );
+            {trans?.map((e, idx) => {
+              if (
+                e.status == "Waiting Approve" ||
+                e.status == "Approve" ||
+                e.status == "Cancel"
+              ) {
+                return (
+                  <tr>
+                    <td>{idx + 1}</td>
+                    <td>{e.user.fullName}</td>
+                    <td>{e.trip.title}</td>
+                    <td>{e.attachment.substr(30)}</td>
+                    {e.status == "Waiting Payment" ? (
+                      <td style={color[3]}>{e.status}</td>
+                    ) : e.status == "Approve" ? (
+                      <td style={color[0]}>Approve</td>
+                    ) : e.status == "Waiting Approve" ? (
+                      <td style={color[1]}>Pending</td>
+                    ) : e.status == "Cancel" ? (
+                      <td style={color[2]}>Cancel</td>
+                    ) : (
+                      <></>
+                    )}
+                    <td>
+                      <button
+                        className="btn-popup-transactions"
+                        onClick={() => {
+                          setIdx(e.id);
+                          setShow(true);
+                        }}
+                      >
+                        <img src={admin} alt="Click" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              }
             })}
           </table>
         </div>
       </div>
-      {show ? (
+      {trans && show ? (
         <div className="container-modal-approve" onClick={() => setShow(false)}>
           <div className="history-trip ps-relative">
             {/* <img src={close} alt="..." className="close-popup"/> */}
@@ -118,7 +166,7 @@ export default function AdminList(props) {
                 <div className="wrapper-date-booking">
                   <p className="p-booking fw-800 text-avenir">Booking</p>
                   <p className="date-booking text-avenir text-grey">
-                    {pay?.date}
+                    {/* {transId[idx]} */}
                   </p>
                 </div>
               </div>
@@ -126,18 +174,25 @@ export default function AdminList(props) {
                 <div className="title-and-status-trip w-100">
                   <div className="wrapper-title-trip">
                     <p className="fw-900 text-avenir fs-24 m-0">
-                      {pay?.order?.nama}
+                      {data?.user.fullName}
                     </p>
                     <p className="m-0 text-avenir fs-14 text-grey">
-                      {pay?.order?.negara}
+                      {data?.trip.country.name}
                     </p>
                   </div>
-                  {pay?.statusPayment == "Approve" ? (
+                  {data?.status == "Approve" ? (
                     <p className="approve-payment text-avenir">Approve</p>
-                  ) : pay?.statusPayment == "Pending" ? (
+                  ) : data?.status == "Waiting Approve" ? (
                     <p className="wait-payment text-avenir">Pending </p>
+                  ) : data?.status == "Waiting Payment" ? (
+                    <p
+                      className="wait-payment text-avenir"
+                      style={{ color: "blue", background: "lightBlue" }}
+                    >
+                      Waiting Payment
+                    </p>
                   ) : (
-                    <p className="cancel-payment text-avenir">Cancel </p>
+                    <p className="cancel-payment text-avenir">Cancel</p>
                   )}
                 </div>
                 <div className="wrapper-info-trip-booking w-100">
@@ -146,7 +201,7 @@ export default function AdminList(props) {
                       Date Trip
                     </p>
                     <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {pay?.order?.dateTrip}
+                      {data?.trip.date_trip}
                     </p>
                   </div>
                   <div className="detail-info-trip-booking">
@@ -154,7 +209,7 @@ export default function AdminList(props) {
                       Duration
                     </p>
                     <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {pay?.order?.duration}
+                      {data?.trip.day} Day - {data?.trip.night} Night
                     </p>
                   </div>
                   <div className="detail-info-trip-booking">
@@ -162,7 +217,7 @@ export default function AdminList(props) {
                       Accomodation
                     </p>
                     <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {pay?.order?.hotel}
+                      {data?.trip.accomodation}
                     </p>
                   </div>
                   <div className="detail-info-trip-booking">
@@ -170,13 +225,17 @@ export default function AdminList(props) {
                       Transportation
                     </p>
                     <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {pay?.order?.penerbangan}
+                      {data?.trip.transportation}
                     </p>
                   </div>
                 </div>
                 <div className="input-photo-booking">
                   <label className="custom-qr border">
-                    <img src={pay?.img} alt=".." className="qr-profil" />
+                    <img
+                      src={data?.attachment}
+                      alt=".."
+                      className="qr-profil"
+                    />
                   </label>
                   <p className="text-avenir fs-13 text-grey">
                     Upload Payment Proof
@@ -195,30 +254,47 @@ export default function AdminList(props) {
                   </tr>
                   <tr className="w-100">
                     <td className="fw-400 fs-18 text-grey">1</td>
-                    <td className="fw-400 fs-18 text-grey">{pay?.name}</td>
-                    <td className="fw-400 fs-18 text-grey">{pay?.gender}</td>
-                    <td className="fw-400 fs-18 text-grey">{pay?.handphone}</td>
+                    <td className="fw-400 fs-18 text-grey">
+                      {data?.user.fullName}
+                    </td>
+                    <td className="fw-400 fs-18 text-grey">
+                      {data?.user.gender}
+                    </td>
+                    <td className="fw-400 fs-18 text-grey">
+                      {data?.user.phone}
+                    </td>
                     <td className="text-avenir fs-18 fw-800">
-                      Qty : {pay?.qty}
+                      Qty : {data?.counterQty}
                     </td>
                     <td></td>
                   </tr>
                 </table>
                 <div className="text-end total-booking">
                   <p className="text-avenir fs-18 fw-800 total-booking-p">
-                    Total : {pay?.total}
+                    Total : {data?.total}
                   </p>
                 </div>
                 <div className="approve-btn text-end">
-                  {pay?.statusPayment == "Approve" ||
-                  pay?.statusPayment == "Cancel" ? (
+                  {data?.status == "Approve" || data?.status == "Cancel" ? (
                     <></>
                   ) : (
                     <>
-                      <button className="cancel" onClick={closePopUpClose}>
+                      <button
+                        className="cancel"
+                        onClick={(e) => {
+                          handleActionCancel.mutate(data?.id);
+                          closePopUpClose();
+                        }}
+                      >
                         Cancel
                       </button>
-                      <button className="approve" onClick={closePopUpApprove}>
+                      <button
+                        className="approve"
+                        onClick={(e) => {
+                          handleActionApprove.mutate(data?.id);
+                          closePopUpClose();
+                        }}
+                      >
                         Approve
                       </button>
                     </>
