@@ -1,236 +1,324 @@
-import { useContext, useEffect, useState, useTransition } from "react";
-import { user } from "../../data/data";
-import name from "../../assets/name.png";
-import email from "../../assets/email.png";
-import phone from "../../assets/phone.png";
-import maps from "../../assets/maps.png";
-import logo from "../../assets/Icon.svg";
-import qr from "../../assets/qr.png";
-import profil from "../../assets/profil.jpg";
-import { UserContext } from "../../context";
-import { useMutation, useQuery } from "react-query";
+import { useContext, useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { useQuery } from "react-query";
+import * as IMG from "../../assets";
+import * as COMP from "../../components/modal";
 import { API } from "../../config/api";
-import Swal from "sweetalert2";
+import { UserContext } from "../../context";
 
 export default function Profile(props) {
-  const [state, dispatch] = useContext(UserContext);
+  const [state, _] = useContext(UserContext);
+  const [fill, setFilter] = useState("");
   const [image, setImage] = useState({
     image: "",
   });
-  const [preview, setPreview] = useState();
+  const [modalShow, setModalShow] = useState(false);
+  console.log(fill);
 
   // GET DATA FROM DATABASE
   const { data: user, refetch } = useQuery("userCache", async () => {
     const response = await API.get(`/user/${state.user.id}`);
     return response.data.data;
   });
-  console.log(user);
-
-  const handleChange = (e) => {
-    setImage({
-      [e.target.name]: e.target.files,
-    });
-
-    if (e.target.type === "file") {
-      let url = URL.createObjectURL(e.target.files[0]);
-      setPreview(url);
-      console.log(url);
-    }
-  };
-
-  const handleSubmit = useMutation(async (e) => {
-    e.preventDefault();
-    try {
-      const config = {
-        headers: {
-          "Content-type": "multipart/form-data",
-        },
-      };
-
-      const formData = new FormData();
-      formData.set("image", image.image[0], image.image[0].name);
-
-      const response = await API.patch(
-        `/update-user/${state.user.id}`,
-        image,
-        config
-      );
-    } catch (error) {
-      console.log("update failed", error);
-      Swal.fire({
-        title: "UpdateFailed",
-        text: `Please Try Again`,
-        icon: "Error",
-      });
-    }
-  });
+  console.log(user?.transaction);
 
   return (
-    <div className="container-profil">
-      <div className="wrapper-content-profil">
-        <div className="wrapper-info-profil ">
-          <div className="content-profil ">
-            <p className="fw-900 text-avenir fs-36">Personal info</p>
-            <div className="wrapper-info-section">
-              <img src={name} alt="..." />
-              <div>
-                <p className="text-avenir fw-900 fs-14">{user?.fullname}</p>
-                <p className="text-avenir fs-12">Fullname</p>
+    <>
+      <div className="container-profil">
+        <div className="wrapper-content-profil">
+          <div className="wrapper-info-profil ">
+            <div className="content-profil ">
+              <p className="fw-900 text-avenir fs-36">Personal info</p>
+              <div className="wrapper-info-section">
+                <img src={IMG.name} alt="..." />
+                <div>
+                  <p className="text-avenir fw-900 fs-14">{user?.fullname}</p>
+                  <p className="text-avenir fs-12">Fullname</p>
+                </div>
               </div>
-            </div>
-            <div className="wrapper-info-section">
-              <img src={email} alt="..." />
-              <div>
-                <p className="text-avenir fw-900 fs-14">{user?.email}</p>
-                <p className="text-avenir fs-12">Email</p>
+              <div className="wrapper-info-section">
+                <img src={IMG.email} alt="..." />
+                <div>
+                  <p className="text-avenir fw-900 fs-14">{user?.email}</p>
+                  <p className="text-avenir fs-12">Email</p>
+                </div>
               </div>
-            </div>
-            <div className="wrapper-info-section">
-              <img src={phone} alt="..." />
-              <div>
-                <p className="text-avenir fw-900 fs-14">{user?.phone}</p>
-                <p className="text-avenir fs-12">Mobile phone</p>
+              <div className="wrapper-info-section">
+                <img src={IMG.phone} alt="..." />
+                <div>
+                  <p className="text-avenir fw-900 fs-14">{user?.phone}</p>
+                  <p className="text-avenir fs-12">Mobile phone</p>
+                </div>
               </div>
-            </div>
-            <div className="wrapper-info-section">
-              <img src={maps} alt="..." />
-              <div>
-                <p className="text-avenir fw-900 fs-14">{user?.address}</p>
-                <p className="text-avenir fs-5">Address</p>
-              </div>
-            </div>
-          </div>
-          <div className="photo-user">
-            {/* <img src={preview ? preview : user?.image ? user?.image : profil} alt="..." /> */}
-            <img src={preview ? preview : profil} alt="..." />
-            <form
-              className="label-change-photo bg-orange"
-              onSubmit={(e) => handleSubmit(e)}
-            >
-              <input
-                type="file"
-                id="chance-photo"
-                name="chance-photo"
-                onChange={handleChange}
-              />
-              <button
-                className="text-avenir fs-18 w-100 h-100 bg-warning"
-                type="submit"
-                style={{ cursor: "pointer" }}
-              >
-                Change Photo Profile
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* {dataMap} */}
-      {user?.transaction.map((e) => {
-        if (e.status == "Approve") {
-          return (
-          <div className="history-trip">
-            <p className="text-avenir fw-900 fs-36 title-history">
-              History Trip
-            </p>
-            <div className="wrapper-booking wrapper-booking-history">
-              <div className="header-booking">
-                <img src={logo} style={{ border: "none" }} />
-                <div className="wrapper-date-booking">
-                  <p className="p-booking fw-800 text-avenir">Booking</p>
-                  <p className="date-booking text-avenir text-grey">
-                    
+              <div className="wrapper-info-section">
+                <img src={IMG.maps} alt="..." />
+                <div>
+                  <p className="text-avenir fw-900 fs-14">{user?.address}</p>
+                  <p className="text-avenir" style={{ fontSize: "1rem" }}>
+                    Address
                   </p>
                 </div>
               </div>
-              <div className="info-trip-booking">
-                <div className="title-and-status-trip w-100">
-                  <div className="wrapper-title-trip">
-                    <p className="fw-900 text-avenir fs-24 m-0">{e.title}</p>
-                    <p className="m-0 text-avenir fs-14 text-grey">
-                      {e.trip.country.name}
-                    </p>
-                  </div>
-                    <p className="wait-approve-payment text-avenir">
-                      {e.status}
-                    </p>
-                </div>
-                <div className="wrapper-info-trip-booking w-100">
-                  <div className="detail-info-trip-booking">
-                    <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
-                      Date Trip
-                    </p>
-                    <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {/* {e.dateTrip} */}
-                    </p>
-                  </div>
-                  <div className="detail-info-trip-booking">
-                    <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
-                      Duration
-                    </p>
-                    <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {e.trip.day} Day - {e.trip.night} Night
-                    </p>
-                  </div>
-                  <div className="detail-info-trip-booking">
-                    <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
-                      Accomodation
-                    </p>
-                    <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {e.trip.accomodation}
-                    </p>
-                  </div>
-                  <div className="detail-info-trip-booking">
-                    <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
-                      Transportation
-                    </p>
-                    <p className="content-info-trip-booking fs-14 text-avenir text-grey">
-                      {e.trip.transportation}
-                    </p>
-                  </div>
-                </div>
-                <div className="input-photo-booking">
-                  <label className="custom-qr border">
-                    <img src={qr} alt=".." className="qr-user" />
-                  </label>
-                  <p className="text-avenir fs-13 text-grey">TCK0101</p>
-                </div>
-              </div>
-              <div className="wrapper-table-info-user">
-                <table className="table-info-user w-100" cellSpacing={0}>
-                  <tr className="w-100">
-                    <th>No</th>
-                    <th className="text-avenir fw-800 fs-18">Full Name</th>
-                    <th className="text-avenir fw-800 fs-18">Gender</th>
-                    <th className="text-avenir fw-800 fs-18">Phone</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                  <tr className="w-100">
-                    <td className="fw-400 fs-18 text-grey">1</td>
-                    <td className="fw-400 fs-18 text-grey">{user?.fullname}</td>
-                    <td className="fw-400 fs-18 text-grey">{user?.gender}</td>
-                    <td className="fw-400 fs-18 text-grey">
-                      {user?.phone}
-                    </td>
-                    <td className="text-avenir fs-18 fw-800">
-                      Qty : {e.counterQty}
-                    </td>
-                  </tr>
-                  <div className="">
-                    <p className="">
-                      Total: {e.total}
-                    </p>
-                  </div>
-                </table>
-                <div className="text-end total-booking">
-                  <p className="text-avenir fs-18 fw-800"></p>
-                </div>
-              </div>
+              <button
+                className="text-avenir fs-18 w-50 bg-warning rounded py-3 px-2 text-light"
+                type="submit"
+                style={{ cursor: "pointer" }}
+                onClick={() => setModalShow(true)}
+              >
+                Edit Profile
+              </button>
+            </div>
+            <div className="photo-user">
+              <img
+                src={
+                  user?.image != "http://localhost:5000/uploads/"
+                    ? user?.image
+                    : IMG.profil
+                }
+                alt="..."
+              />
             </div>
           </div>
-          );
-        }})}
-    </div>
+        </div>
+        {user?.transaction.length !== 0 ? (
+          <>
+            <div className="">
+              <h2>Filter</h2>
+              <Button
+                variant="success"
+                className="ms-0"
+                onClick={() => setFilter("approve")}
+              >
+                Approve
+              </Button>
+              <Button
+                variant="warning"
+                className="text-light"
+                onClick={() => setFilter("waiting")}
+              >
+                Pending
+              </Button>
+              <Button variant="primary" onClick={() => setFilter("")}>
+                All
+              </Button>
+              <Form.Control
+                type="text"
+                placeholder="Search Your Ticket"
+                name="fill"
+                className="mt-4"
+                onChange={(e) => setFilter(e.target.value)}
+              />
+            </div>
+            <p className="text-avenir fw-900 fs-36 title-history mt-4">
+              History Trip
+            </p>
+            {user?.transaction
+              ?.filter((e) => {
+                if (fill === "") {
+                  return e;
+                } else if (
+                  e.status.toLowerCase().includes(fill?.toLowerCase())
+                ) {
+                  return e;
+                } else if (
+                  e.trip.title.toLowerCase().includes(fill?.toLowerCase())
+                ) {
+                  return e;
+                } else if (
+                  e.trip.country.name
+                    .toLowerCase()
+                    .includes(fill?.toLowerCase())
+                ) {
+                  return e;
+                } else if (
+                  e.trip.accomodation
+                    .toLowerCase()
+                    .includes(fill?.toLowerCase())
+                ) {
+                  return e;
+                } else if (
+                  e.trip.transportation
+                    .toLowerCase()
+                    .includes(fill?.toLowerCase())
+                ) {
+                  return e;
+                }
+              })
+              .map((e) => {
+                if (e.trip.title != "") {
+                  return (
+                    <div className="history-trip">
+                      <div className="wrapper-booking wrapper-booking-history">
+                        <div className="header-booking">
+                          <img src={IMG.logo} style={{ border: "none" }} />
+                          <div className="wrapper-date-booking">
+                            <p className="p-booking fw-800 text-avenir">
+                              Booking
+                            </p>
+                            <p className="date-booking text-avenir text-grey"></p>
+                          </div>
+                        </div>
+                        <div className="info-trip-booking">
+                          <div className="title-and-status-trip w-100">
+                            <div className="wrapper-title-trip">
+                              <p className="fw-900 text-avenir fs-24 m-0">
+                                {e.trip.title}
+                              </p>
+                              <p className="m-0 text-avenir fs-14 text-grey">
+                                {e.trip.country.name}
+                              </p>
+                            </div>
+                            {e.status}
+                          </div>
+                          <div className="wrapper-info-trip-booking w-100">
+                            <div className="detail-info-trip-booking">
+                              <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
+                                Date Trip
+                              </p>
+                              <p className="content-info-trip-booking fs-14 text-avenir text-grey">
+                                {e.trip.date_trip}
+                              </p>
+                            </div>
+                            <div className="detail-info-trip-booking">
+                              <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
+                                Duration
+                              </p>
+                              <p className="content-info-trip-booking fs-14 text-avenir text-grey">
+                                {e.trip.day} Day - {e.trip.night} Night
+                              </p>
+                            </div>
+                            <div className="detail-info-trip-booking">
+                              <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
+                                Accomodation
+                              </p>
+                              <p className="content-info-trip-booking fs-14 text-avenir text-grey">
+                                {e.trip.accomodation}
+                              </p>
+                            </div>
+                            <div className="detail-info-trip-booking">
+                              <p className="title-info-trip-booking fw-800 fs-18 text-avenir">
+                                Transportation
+                              </p>
+                              <p className="content-info-trip-booking fs-14 text-avenir text-grey">
+                                {e.trip.transportation}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="input-photo-booking">
+                            <label className="custom-qr">
+                              <img
+                                src={IMG.qr}
+                                alt=".."
+                                className="qr-user w-100"
+                              />
+                            </label>
+                            <p className="text-avenir fs-13 text-grey">
+                              TCK0101
+                            </p>
+                          </div>
+                        </div>
+                        <div className="wrapper-table-info-user">
+                          <table
+                            className="table-info-user w-100"
+                            cellSpacing={0}
+                          >
+                            <tr className="w-100 fluid">
+                              <th className="" style={{ width: "3rem" }}>
+                                No
+                              </th>
+                              <th
+                                className="text-avenir fw-800 fs-18"
+                                style={{ width: "18rem" }}
+                              >
+                                Full Name
+                              </th>
+                              <th
+                                className="text-avenir fw-800 fs-18 "
+                                style={{ width: "10rem" }}
+                              >
+                                Gender
+                              </th>
+                              <th className="text-avenir fw-800 fs-18">
+                                Phone
+                              </th>
+                              <th></th>
+                              <th></th>
+                            </tr>
+                            <tr
+                              className="w-100"
+                              style={{ borderBottom: "1px solid black" }}
+                            >
+                              <td className="fw-400 fs-18 text-grey">1</td>
+                              <td className="fw-400 fs-18 text-grey">
+                                {user?.fullname}
+                              </td>
+                              <td className="fw-400 fs-18 text-grey">
+                                {user?.gender ? user.gender : "Non-Binary"}
+                              </td>
+                              <td
+                                className="fw-400 fs-18 text-grey"
+                                style={{ width: "15rem" }}
+                              >
+                                {user?.phone}
+                              </td>
+                              <td className="text-avenir fs-18 fw-800">
+                                Qty : {e.counterQty}
+                              </td>
+                            </tr>
+                            {/* <tr>
+                          <td>Total : 
+                            {new Intl.NumberFormat("id-ID", {
+                              style: "currency",
+                              currency: "IDR",
+                            }).format(e.total)}</td>
+                        </tr> */}
+                          </table>
+                          <div className="w-100 d-flex fs-18 justify-content-end">
+                            <div
+                              className="d-flex align-items-center mt-3"
+                              style={{ width: "29.7%" }}
+                            >
+                              <p className="fw-bold">
+                                Total:{" "}
+                                {new Intl.NumberFormat("id-ID", {
+                                  style: "currency",
+                                  currency: "IDR",
+                                }).format(e.total)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-end total-booking">
+                            <p className="text-avenir fs-18 fw-800"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              })
+              .reverse()}
+          </>
+        ) : (
+          <>
+            <p className="text-avenir fw-900 fs-36 title-history mt-5">
+              History Trip
+            </p>
+            <div className="w-100 d-flex justify-content-center mt-5">
+              <img
+                src={IMG.noTrip}
+                alt="..."
+                className="w-50 m-auto border text-center rounded-5"
+              />
+            </div>
+          </>
+        )}
+        {/* {dataMap} */}
+      </div>
+      <COMP.UpdateProfile
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        setShow={setModalShow}
+      />
+    </>
   );
 }

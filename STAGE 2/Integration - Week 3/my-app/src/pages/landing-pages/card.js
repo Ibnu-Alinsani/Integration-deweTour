@@ -1,5 +1,4 @@
 import { DataPerformances } from "../../data/data";
-// import "./card.css";
 
 export default function CardPerformance() {
   return DataPerformances.map((data) => {

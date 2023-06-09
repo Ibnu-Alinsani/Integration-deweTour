@@ -1,4 +1,3 @@
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate, useParams, Navigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import hotel from "../../assets/hotel.svg";
@@ -12,24 +11,48 @@ import { API } from "../../config/api";
 import Swal from "sweetalert2";
 import { UserContext } from "../../context";
 
-export default function Detail(props) {
-  // const [data, setData] = useState([]);
+import ModalImage from "../../components/modal/image-car";
+
+export default function Detail() {
+  useEffect(() => {
+    window.scroll(0,0)
+  }, [])
+
   const { id } = useParams();
   const [count, setCount] = useState(1);
   const [money, setMoney] = useState(0);
-  const [booking, setBooking] = useState(null);
-  const [state, dispatch] = useContext(UserContext);
+  const [state, _] = useContext(UserContext);
+  const [modalShow, setModalShow] = useState(false);
+  const [idx, setIdx] = useState();
+
+  useEffect(() => {
+    const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js"
+
+    const myMidtransClientKey = process.env.REACT_APP_MIDTRANS_CLIENT_KEY;
+
+    let scriptTag = document.createElement("script");
+    scriptTag.src = midtransScriptUrl;
+    scriptTag.setAttribute("data-client-key", myMidtransClientKey)
+
+    document.body.appendChild(scriptTag);
+    return () => {
+      document.body.removeChild(scriptTag)
+    }
+  }, [])
 
   const { data: detailTrip } = useQuery("detailCache", async () => {
     const response = await API.get(`/trip/${id}`);
     return response.data.data;
   });
 
-  useEffect(() => {
-    if (booking) {
-      localStorage.setItem("booking", JSON.stringify(booking));
-    }
-  }, [booking]);
+  if (count > detailTrip?.quota) {
+    Swal.fire({
+      title: "Warning",
+      text: `You Order More than Quota`,
+      icon: "warning",
+    });
+    setCount(detailTrip.quota);
+  }
 
   const images = [img.negara1, img.negara2, img.negara3];
 
@@ -85,14 +108,17 @@ export default function Detail(props) {
 
   let data = {
     CounterQty: count,
-    Status: "Waiting Payment",
+    // Status: "Waiting Approve",
     Total: money,
-    Attachment: "nothing",
     TripID: detailTrip?.id,
   };
 
+  function handleSelect(i, e) {
+    setIdx(i);
+  }
+
   // handleBook
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const handleBookNow = useMutation(async (e) => {
     e.preventDefault();
     try {
@@ -105,15 +131,40 @@ export default function Detail(props) {
       const body = JSON.stringify(data);
 
       const response = await API.post("/add-transaction", body, config);
+      console.log(response);
       console.log("Transaction Success", response.data.data);
 
-      Swal.fire({
-        title: "Success",
-        text: `We wait your payment`,
-        icon: "success",
-      });
-      Navigate("/booking");
+      const token = response.data.data.token;
+      window.snap.pay(token, {
+        onSuccess: function (result) {
+          console.log(result, "success")
+          navigate("/profile")
+        }, 
+        onPending: function (result) {
+          console.log(result, "pending")
+          navigate("/profile")
+        },
+        onError: function (result) {
+          console.log(result, "error");
+          navigate("/profile")
+        },
+        onClose: function () {
+          alert("you closed the popup without finishing the payment")
+        }
+      })
+
+      // Swal.fire({
+      //   title: "Success",
+      //   text: `We wait your payment`,
+      //   icon: "success",
+      // });
+      // Navigate("/booking");
     } catch (error) {
+      Swal.fire({
+        title: "error",
+        text: `Sorry, Your order has failed. We will fix for you `,
+        icon: "error",
+      });
       console.log("Transaction failed", error);
     }
   });
@@ -125,6 +176,14 @@ export default function Detail(props) {
           <h1>{detailTrip?.title}</h1>
           <p>{detailTrip?.Country.name}</p>
         </div>
+
+        <ModalImage
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          handleSelect={handleSelect}
+          idx={idx}
+        />
+
         <div className="carousel-detail">
           {/* Nuka carousel */}
           <div className="w-100 img-detail">
@@ -135,14 +194,23 @@ export default function Detail(props) {
               style={{
                 objectFit: "cover",
               }}
+              // onClick={() => setIdx(0)}
             />
           </div>
           <div className="w-100">
             <div className="d-flex container-img-group">
-              {images.map((e) => {
+              {images.map((e, i) => {
                 return (
                   <div>
-                    <img src={e} alt={e} className="img-group-detail" />
+                    <img
+                      src={e}
+                      alt={e}
+                      className="img-group-detail"
+                      onClick={() => {
+                        setModalShow(true);
+                        setIdx(i);
+                      }}
+                    />
                   </div>
                 );
               })}
@@ -233,6 +301,16 @@ export default function Detail(props) {
                     +
                   </button>
                 </>
+              ) : state.role == "admin" ? (
+                <>
+                  <p className="text-avenir fw-900 fs-18 mt-3">You Are Admin</p>
+                </>
+              ) : state.role == "" ? (
+                <>
+                  <p className="text-avenir fw-900 fs-18 mt-3">
+                    You must Be Login Before
+                  </p>
+                </>
               ) : (
                 <></>
               )}
@@ -265,17 +343,16 @@ export default function Detail(props) {
           )}
         </div>
         <div className="container-btn-book">
-          {
-            state.role == "user" ?
-          <button
-            className="btn-book bg-orange fw-900 fs-18 text-avenir"
-            onClick={(e) => handleBookNow.mutate(e)}
-          >
-            BOOK NOW
-          </button>
-          :
-          <></>
-          }
+          {state.role == "user" ? (
+            <button
+              className="btn-book bg-orange fw-900 fs-18 text-avenir"
+              onClick={(e) => handleBookNow.mutate(e)}
+            >
+              BOOK NOW
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </>

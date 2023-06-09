@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import icon from "../../assets/Icon.svg";
 import close from "../../assets/close.svg";
 import { Link, useNavigate } from "react-router-dom";
-import { user } from "../../data/data";
 import Dropdown from "rsuite/Dropdown";
 import profile from "../../assets/profile.png";
 import profil from "../../assets/profil.jpg";
@@ -34,6 +33,7 @@ export default function Navbar(props) {
   const [imgShow, setImgShow] = useState(false);
 
   const [state, dispatch] = useContext(UserContext);
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -43,10 +43,10 @@ export default function Navbar(props) {
     gender: "",
   });
 
-  const {data : user} = useQuery("userCache", async () => {
-    const response = await API.get('/user/' + state.user.id)
-    return response.data.data
-  })
+  const { data: user } = useQuery("userCache", async () => {
+    const response = await API.get("/user/" + state.user.id);
+    return response.data.data;
+  });
 
   const [formLogin, setFormLogin] = useState({
     email: "",
@@ -58,7 +58,8 @@ export default function Navbar(props) {
       title: "Logout Success",
       text: `See You Again `,
       icon: "success",
-      // confirmButtonText: "oke",
+      showConfirmButton: false,
+      timer: 1500,
     });
     dispatch({
       type: "LOGOUT",
@@ -108,27 +109,48 @@ export default function Navbar(props) {
       console.log("Login Success : ", data);
 
       if (data.role == "admin") {
-        Swal.fire({
-          title: "Login Success",
-          text: `Welcome ${data.fullname}, How Are You Today?`,
-          icon: "success",
-          confirmButtonText: "FINE",
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
         });
-      } else  {
-        Swal.fire({
-          title: "Login Success",
-          text: `Welcome ${data.fullname}, Enjoy Your Travel`,
+
+        Toast.fire({
           icon: "success",
+          title: `Welcome ${data.fullname}, 
+          How Are You Today?`,
+        });
+      } else {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: "success",
+          title: `Welcome ${data.fullname}, Enjoy Your Travel`,
         });
       }
-
 
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: response.data.data,
       });
 
-      setImgShow(true)
+      setImgShow(true);
 
       setAuthToken(localStorage.token);
       hiddenLogin();
@@ -147,10 +169,17 @@ export default function Navbar(props) {
     const icon = document.querySelector(".rs-btn");
     // console.log(icon, "ini icon");
     if (icon) {
-      icon.style.backgroundImage = `url(${user?.image ? user?.image : profil})`;
-      icon.style.zIndex = "2";
+      if (user?.role == "user") {
+        icon.style.backgroundImage = `url(${
+          user?.image ? user?.image : profil
+        })`;
+        icon.style.zIndex = "2";
+      } else {
+        icon.style.backgroundImage = `url(${profil})`;
+        icon.style.zIndex = "2";
+      }
     }
-  }, [imgShow]);
+  }, [imgShow, user?.image]);
 
   const handleOnSubmitRegister = useMutation(async (e) => {
     e.preventDefault();
@@ -180,7 +209,6 @@ export default function Navbar(props) {
         title: "Registration Failed, your Email Already exists",
         text: `Try Again, please`,
         icon: "error",
-        // confirmButtonText: "oke",
       });
     }
   });
@@ -207,12 +235,12 @@ export default function Navbar(props) {
         <div className="profil">
           <Dropdown title="" trigger={"hover"}>
             <Dropdown.Item>
-              <img src={trip} alt="profile" className="icon-dropdown" />
               <Link
                 to="/trip-income"
                 style={styleLink}
                 className="fs-18 fw-700 text-pr-sans link-dropdown"
               >
+                <img src={trip} alt="profile" className="icon-dropdown" />
                 <button
                   style={styleLink}
                   className="btn-logout fs-18 fw-700 text-pr-sans"
@@ -222,12 +250,12 @@ export default function Navbar(props) {
               </Link>
             </Dropdown.Item>
             <Dropdown.Item>
-              <img src={list} alt="profile" className="icon-dropdown" />
               <Link
                 to="/"
                 style={styleLink}
                 className="fs-18 fw-700 text-pr-sans link-dropdown"
               >
+                <img src={list} alt="profile" className="icon-dropdown" />
                 <button
                   style={styleLink}
                   className="btn-logout fs-18 fw-700 text-pr-sans"
@@ -260,12 +288,12 @@ export default function Navbar(props) {
         <div className="profil">
           <Dropdown title="" trigger={"hover"}>
             <Dropdown.Item>
-              <img src={profile} alt="profile" className="icon-dropdown" />
               <Link
                 to="/profile"
                 style={styleLink}
                 className="fs-18 fw-700 text-pr-sans link-dropdown"
               >
+                <img src={profile} alt="profile" className="icon-dropdown" />
                 <button
                   style={styleLink}
                   className="btn-logout fs-18 fw-700 text-pr-sans"
@@ -274,18 +302,6 @@ export default function Navbar(props) {
                 </button>
               </Link>
             </Dropdown.Item>
-            
-              <Dropdown.Item>
-                <img src={bill} alt="pay" className="icon-dropdown" />
-                <Link
-                  to={`/booking`}
-                  style={styleLink}
-                  className="fs-18 fw-700 text-pr-sans link-dropdown"
-                >
-                  Pay
-                </Link>
-              </Dropdown.Item>
-            <hr />
             <Dropdown.Item>
               <img src={logout} alt="logout" className="icon-dropdown" />
               <button

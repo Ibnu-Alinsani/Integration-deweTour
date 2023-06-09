@@ -3,6 +3,10 @@
 @import url("https://fonts.cdnfonts.com/css/product-sans");
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+html {
+  scroll-behavior: smooth;
+}
+
 #root {
   width: 98.79vw;
   /* background-color: #e5e5e5; */
@@ -307,6 +311,7 @@ nav.nav {
   font-size: 1.4rem;
   outline: none;
   border: none;
+  border-radius: 5px;
 }
 
 .input-search button {
@@ -358,7 +363,9 @@ nav.nav {
 /* locate */
 .card-locate {
   width: 350px;
-  height: 300px;
+  height: auto;
+  padding-right: .75rem;
+  padding-left: .75rem;
   border-radius: 5px;
   padding-top: 11px;
   background-color: white;
@@ -366,7 +373,18 @@ nav.nav {
   box-sizing: border-box;
   position: relative;
   color: black;
+  z-index: inherit;
 }
+
+.carousel-item {
+  height: 230px;
+}
+.carousel-item img {
+  height: 230px;
+  border-radius: 5px;
+}
+
+
 .carousel-container {
   border-radius: 5px;
   box-sizing: border-box;
@@ -403,7 +421,7 @@ nav.nav {
   padding: .5rem;
   border-radius: 5px 0 0 5px;
   font-weight: 700;
-  z-index: 999999 !important;
+  z-index: 1 !important;
 }
 
 .locate-name,
@@ -413,9 +431,7 @@ nav.nav {
 }
 
 .locate-name {
-  /* margin-top: 9px; */
-  margin-left: 11px;
-  margin-bottom: -8px;
+  /* margin-bottom: -8px; */
   text-align: start;
   font-weight: 500;
   font-size: 24px;
@@ -425,6 +441,7 @@ nav.nav {
   font-weight: 900;
   font-size: 18px;
   color: #ffaf00;
+  margin-left: -.6rem !important;
 }
 
 .locate-country {
@@ -432,6 +449,7 @@ nav.nav {
   font-size: 18px;
   color: #878787;
   margin-top: -5px;
+  margin-right: -.6rem !important;
 }
 
 .inform {
@@ -1228,16 +1246,8 @@ nav.nav {
 
 .carousel-container {
   height: auto;
-  /* border: 1px solid black; */
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
-
-/* .carousel-root {
-  height: rem !important;
-} */
-/* .card-locate {
-  height: 10remf;
-} */
 
 .img-detail img{
   height: 25rem !important;
@@ -1254,4 +1264,14 @@ nav.nav {
 .container-img-group {
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.carousel-slide {
+  height: 10rem !important;
+}
+.colored-toast.swal2-icon-success {
+  background-color: #a5dc86 !important;
+}
+.colored-toast.swal2-icon-error {
+  background-color: #f27474 !important;
 }

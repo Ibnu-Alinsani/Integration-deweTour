@@ -1,48 +1,40 @@
-import "./App.css";
-import Navbar from "./parts/navbar";
-import LandingPages from "./pages/landing-pages/landing-page";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-  Outlet,
-} from "react-router-dom";
-import Footer from "./parts/Footer/footer";
-import Detail from "./pages/detail";
-import Booking from "./pages/booking";
-import { useState, useContext, useEffect } from "react";
-import navbarCrop from "./assets/navbar-crop.png";
-import Profile from "./pages/profil";
-import AdminList from "./pages/list-transaction";
-import Trip from "./pages/income-trip";
-import AddTrip from "./pages/add-trip";
-import { UserContext } from "./context";
-import { API, setAuthToken } from "./config/api";
+import { useContext, useEffect, useState } from "react";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Swal from "sweetalert2";
-import AddCountry from "./pages/add-country";
+import "./App.css";
+import navbarCrop from "./assets/navbar-crop.png";
+import { API, setAuthToken } from "./config/api";
+import { UserContext } from "./context";
+import AddTrip from "./pages/add-trip";
+import Booking from "./pages/booking";
+import Detail from "./pages/detail";
+import Trip from "./pages/income-trip";
+import LandingPages from "./pages/landing-pages/landing-page";
+import AdminList from "./pages/list-transaction";
+import Profile from "./pages/profil";
+import UpdateTrip from "./components/modal/update-trip";
+import Footer from "./parts/Footer/footer";
+import Navbar from "./parts/navbar";
 
 function App() {
   const [state, dispatch] = useContext(UserContext);
-  
-  const [isLoading, setIsLoading] = useState();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading) {
       if (state.isLogin === false) {
-        <Navigate to="/" replace/>
-        // alert("silahkan login mas")
+        <Navigate to="/" replace />;
       }
     }
   }, [isLoading]);
 
-  
   useEffect(() => {
     if (localStorage.token) {
-      setAuthToken(localStorage.token)
+      setAuthToken(localStorage.token);
       checkUser();
     } else {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }, []);
 
@@ -70,21 +62,8 @@ function App() {
     }
   };
 
-
-  function ProtectedRoute({ user, Children }) {
-    if (!user) {
-      return <Navigate to="/" replace />;
-    }
-    return Children;
-  }
-
   function PrivateRouteAdmin(props) {
     if (props.login != "admin") {
-      // Swal.fire({
-      //   title: "wait",
-      //   text: `Tunggu Sebentar`,
-      //   icon: "info",
-      // });
       return <Navigate to="/" replace />;
     }
     return <Outlet />;
@@ -92,45 +71,38 @@ function App() {
 
   function PrivateRouteUser(props) {
     if (props.login != "user") {
-      // Swal.fire({
-      //   title: "wait",
-      //   text: `Tunggu Sebentar`,
-      //   icon: "info",
-      // });
+      Swal.fire({
+        title: "Error",
+        text: `You Must be Login First`,
+        icon: "error",
+      });
       return <Navigate to="/" replace />;
     }
     return <Outlet />;
   }
 
-  // const decode = jwt_decode(localStorage.token).role
-  // const decode = "ayam"
-  // console.log(decode)
+  document.addEventListener("wheel", function(event){
+    if(document.activeElement.type === "number"){
+        document.activeElement.blur();
+    }
+});
 
   return (
     <>
-      <main>
-        {isLoading ? null : (
-          // <Router>
-          <>
-            <Navbar/>
+      {isLoading ? null : (
+        <>
+          <main>
+            {/* // <Router> */}
+            <Navbar />
             <img src={navbarCrop} className="navbar-crop" />
             <Routes>
               <Route
                 path="/"
                 element={
-                  state.user.role == "admin" ? (
-                    <AdminList />
-                  ) : (
-                    <LandingPages />
-                  )
+                  state.user.role == "admin" ? <AdminList /> : <LandingPages />
                 }
               />
-              <Route
-                path="/detail-place/:id"
-                element={
-                  <Detail/>
-                }
-              />
+              <Route path="/detail-place/:id" element={<Detail />} />
 
               <Route
                 exact
@@ -139,7 +111,7 @@ function App() {
               >
                 <Route path="/trip-income" element={<Trip />} />
                 <Route path="/add-trip" element={<AddTrip />} />
-                <Route path="/add-country" element={<AddCountry />}/>
+                <Route path="/update-trip" element={<UpdateTrip />} />
               </Route>
 
               <Route
@@ -147,27 +119,15 @@ function App() {
                 path="/"
                 element={<PrivateRouteUser login={state.role} />}
               >
-                <Route
-                  exact
-                  path="/booking"
-                  element={
-                    <Booking />
-                  }
-                />
-                <Route
-                  exact
-                  path="/profile"
-                  element={
-                    <Profile/>
-                  }
-                />
+                <Route exact path="/booking" element={<Booking />} />
+                <Route exact path="/profile" element={<Profile />} />
               </Route>
               {/* private route */}
             </Routes>
-          </>
-        )}
-      </main>
-      <Footer />
+          </main>
+          <Footer />
+        </>
+      )}
     </>
   );
 }
